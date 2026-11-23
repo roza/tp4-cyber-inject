@@ -15,6 +15,10 @@ final class Db
     public static function connexion(): PDO
     {
         $dsn = getenv('DB_DSN') ?: 'sqlite:' . __DIR__ . '/../var/kinegest.sqlite';
-        return new PDO($dsn, getenv('DB_USER') ?: null, getenv('DB_PASS') ?: null);
+        return new PDO($dsn, getenv('DB_USER') ?: null, getenv('DB_PASS') ?: null),[
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_EMULATE_PREPARES => false;
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO:FETCH_ASSOC
+        ]   
     }
 }
