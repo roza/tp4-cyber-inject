@@ -16,8 +16,11 @@ final class UtilisateurRepository
      */
     public function authentifier(string $login, string $mdp): ?array
     {
-        $sql = "SELECT id, login, nom, motDePasse FROM Utilisateur WHERE login = '" . $login . "'";
-        $ligne = $this->pdo->query($sql)->fetch(PDO::FETCH_ASSOC);
+        $sql = "SELECT id, login, nom, motDePasse FROM Utilisateur WHERE login = :login";
+        $req = $this->pdo->prepare($sql);
+        $req->bindValue(':login',$login,PDO::PARAM_STR);
+        $req->execute();
+        $ligne = $req->fetch(PDO::FETCH_ASSOC);
 
         if ($ligne === false || !password_verify($mdp, $ligne['motDePasse'])) {
             return null;
