@@ -13,8 +13,10 @@ final class PatientRepository
     /** Patients dont le nom contient $texte, triés par nom. */
     public function rechercherParNom(string $texte): array
     {
-        $sql = "SELECT id, nom, prenom, ville FROM Patient WHERE nom LIKE '%" . $texte . "%' ORDER BY nom";
-        return $this->pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+        $sql = "SELECT id, nom, prenom, ville FROM Patient WHERE nom LIKE :motif ORDER BY nom";
+        $req -> bindValue(':motif', '%'.$texte'%',PDO::PARAM_STR);
+        $req -> execute();
+        return $req->fetchAll(PDO::FETCH_ASSOC);
     }
 
     /**
