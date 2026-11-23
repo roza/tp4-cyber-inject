@@ -26,7 +26,7 @@ final class PatientRepository
      */
     public function lister(string $tri = 'nom', string $sens = 'asc'): array
     {
-        const COLONNES_TRI = ['nom', 'prenom', 'ville', 'dateNaissance'];
+        const COLONNES_TRI = array('nom', 'prenom', 'ville', 'dateNaissance');
         // on vérifie que $tri est dans la liste blanche
         $col = in_array($tri, COLONNES_TRI, true) ? $tri : 'nom';
         $sens = strtolower($sens)==="desc" ? 'DESC' : 'ASC'; 
