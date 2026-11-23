@@ -1,6 +1,7 @@
 package fr.kineo;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -19,10 +20,10 @@ public class PatientDao {
 
     /** Patients dont le nom contient {@code texte}, triés par nom. */
     public List<Patient> rechercherParNom(String texte) throws SQLException {
-        String sql = "SELECT id, nom, prenom, ville, dateNaissance FROM Patient "
-                   + "WHERE nom LIKE '%" + texte + "%' ORDER BY nom";
-        Statement st = cnx.createStatement();
-        return lire(st.executeQuery(sql));
+        PreparedStatement ps = cnx.prepareStatement("SELECT id, nom,prenom,ville, dateNaissance FROM Patient "
+                   + "WHERE nom LIKE ? ORDER BY nom");
+        ps.setString(1,"%"+ texte +"%");
+        return lire(ps);
     }
 
     /**
@@ -43,8 +44,9 @@ public class PatientDao {
         return lire(st.executeQuery(sql)).stream().findFirst();
     }
 
-    private static List<Patient> lire(ResultSet rs) throws SQLException {
+    private static List<Patient> lire(PreparedStatement ps) throws SQLException {
         List<Patient> patients = new ArrayList<>();
+        ResultSet rs = ps.executeQuery();
         while (rs.next()) {
             patients.add(new Patient(rs.getInt("id"), rs.getString("nom"), rs.getString("prenom"),
                     rs.getString("ville"), LocalDate.parse(rs.getString("dateNaissance"))));
