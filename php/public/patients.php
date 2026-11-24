@@ -19,7 +19,8 @@ try {
         ? $depot->rechercherParNom($recherche)
         : $depot->lister($_GET['tri'] ?? 'nom', $_GET['sens'] ?? 'asc');
 } catch (PDOException $e) {
-    $message = 'Erreur : ' . $e->getMessage();
+     error_log('Erreur : ' . $e->getMessage());
+        $message = 'Serveur indisponible';
 }
 
 function lienTri(string $colonne, string $libelle): string

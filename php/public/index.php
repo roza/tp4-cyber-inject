@@ -19,7 +19,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         $message = 'Identifiant ou mot de passe incorrect.';
     } catch (PDOException $e) {
-        $message = 'Erreur : ' . $e->getMessage();
+        eeror_log('Erreur : ' . $e->getMessage());
+        $message = 'Serveur indisponible';
     }
 }
 ?>
