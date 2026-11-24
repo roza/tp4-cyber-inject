@@ -13,6 +13,9 @@ import java.util.Optional;
 public class PatientDao {
 
     private final Connection cnx;
+    private static final List<String> COLONNES_TRI = List.of("nom","prenom","ville", "dateNaissance");
+
+    private static final String REQ = "SELECT id,nom,prenom,ville, dateNaissance FROM Patient";
 
     public PatientDao(Connection cnx) {
         this.cnx = cnx;
@@ -20,8 +23,7 @@ public class PatientDao {
 
     /** Patients dont le nom contient {@code texte}, triés par nom. */
     public List<Patient> rechercherParNom(String texte) throws SQLException {
-        PreparedStatement ps = cnx.prepareStatement("SELECT id, nom,prenom,ville, dateNaissance FROM Patient "
-                   + "WHERE nom LIKE ? ORDER BY nom");
+        PreparedStatement ps = cnx.prepareStatement(REQ + "WHERE nom LIKE ? ORDER BY nom");
         ps.setString(1,"%"+ texte +"%");
         return lire(ps);
     }
@@ -32,16 +34,17 @@ public class PatientDao {
      * sens inconnu donne le tri par défaut : nom, croissant.
      */
     public List<Patient> listerTriePar(String colonne, String sens) throws SQLException {
-        String sql = "SELECT id, nom, prenom, ville, dateNaissance FROM Patient ORDER BY "
-                   + colonne + " " + sens;
-        Statement st = cnx.createStatement();
-        return lire(st.executeQuery(sql));
+        String col = COLONNES_TRI.contains(colonne) ? colonne : "nom";
+        String ordre = "desc".equalsIgnoreCase(sens)?"DESC":"ASC";
+        String sql = REQ + "ORDER BY " + col + " " + ordre;
+        PreparedStatement ps = cnx.prepareStatement(sql);
+        return lire(ps);
     }
 
     public Optional<Patient> trouverParId(int id) throws SQLException {
-        String sql = "SELECT id, nom, prenom, ville, dateNaissance FROM Patient WHERE id = " + id;
-        Statement st = cnx.createStatement();
-        return lire(st.executeQuery(sql)).stream().findFirst();
+        PreparedStatement ps = cnx.prepareStatement(REQ + " WHERE id = ?");
+        ps.setInt(1,id);
+        return lire(ps).stream().findFirst();
     }
 
     private static List<Patient> lire(PreparedStatement ps) throws SQLException {
