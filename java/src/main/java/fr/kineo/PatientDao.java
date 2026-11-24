@@ -15,7 +15,7 @@ public class PatientDao {
     private final Connection cnx;
     private static final List<String> COLONNES_TRI = List.of("nom","prenom","ville", "dateNaissance");
 
-    private static final String REQ = "SELECT id,nom,prenom,ville, dateNaissance FROM Patient";
+    private static final String REQ = "SELECT id,nom,prenom,ville, dateNaissance FROM Patient ";
 
     public PatientDao(Connection cnx) {
         this.cnx = cnx;
